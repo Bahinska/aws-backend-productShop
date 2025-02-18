@@ -1,4 +1,3 @@
-# "service" is the name of this project. This will also be added to your AWS resource names.
 service: product-service
 
 frameworkVersion: '4'
@@ -16,9 +15,14 @@ functions:
       - http:
           path: products
           method: get
+          cors:
+            origin: 'https://d1ytwuscrmnd54.cloudfront.net'
+
   getProductById:
     handler: handlers/getProductById.handler
     events:
       - http:
           path: products/{productId}
           method: get
+          cors:
+            origin: 'https://d1ytwuscrmnd54.cloudfront.net'
