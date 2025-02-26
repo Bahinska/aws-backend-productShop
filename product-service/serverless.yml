@@ -1,0 +1,28 @@
+service: product-service
+
+frameworkVersion: '4'
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  stage: dev
+  region: eu-north-1
+
+functions:
+  getProductsList:
+    handler: handlers/getProductsList.handler
+    events:
+      - http:
+          path: products
+          method: get
+          cors:
+            origin: 'https://d1ytwuscrmnd54.cloudfront.net'
+
+  getProductById:
+    handler: handlers/getProductById.handler
+    events:
+      - http:
+          path: products/{productId}
+          method: get
+          cors:
+            origin: 'https://d1ytwuscrmnd54.cloudfront.net'
