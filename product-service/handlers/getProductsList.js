@@ -30,6 +30,9 @@ const getStockForProduct = async (productId) => {
 
 exports.handler = async (event) => {
   try {
+    // Log the incoming event to see the request payload
+    console.log('Received event:', JSON.stringify(event, null, 2));
+
     const products = await scanProducts();
 
     const productsWithStock = [];
