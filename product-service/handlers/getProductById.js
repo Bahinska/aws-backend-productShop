@@ -1,17 +1,25 @@
-
-
-const mockProducts = require('../data/mockProducts');
+const AWS = require('aws-sdk');
+const dynamo = new AWS.DynamoDB.DocumentClient();
 
 exports.handler = async (event) => {
-  try {
-    const { productId } = event.pathParameters; // Extract productId from path parameters
-    const product = mockProducts.find(p => p.id === productId);
-    const headers = {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Credentials': true,
-      };
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Credentials': true,
+  };
 
-    if (!product) {
+  try {
+    const { productId } = event.pathParameters;
+
+    const params = {
+      TableName: process.env.PRODUCTS_TABLE_NAME,
+      Key: {
+        id: productId,
+      },
+    };
+
+    const result = await dynamo.get(params).promise();
+
+    if (!result.Item) {
       return {
         statusCode: 404,
         headers: headers,
@@ -20,6 +28,19 @@ exports.handler = async (event) => {
         })
       };
     }
+
+    const stockParams = {
+      TableName: process.env.STOCKS_TABLE_NAME,
+      Key: {
+        product_id: productId,
+      },
+    };
+
+    const stockResult = await dynamo.get(stockParams).promise();
+    const stockCount = stockResult.Item ? stockResult.Item.count : 0;
+
+    const product = result.Item;
+    product.count = stockCount;
 
     return {
       statusCode: 200,
