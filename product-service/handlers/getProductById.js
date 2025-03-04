@@ -1,5 +1,12 @@
-const AWS = require('aws-sdk');
-const dynamo = new AWS.DynamoDB.DocumentClient();
+const {
+  DynamoDBDocument,
+} = require('@aws-sdk/lib-dynamodb');
+
+const {
+  DynamoDB,
+} = require('@aws-sdk/client-dynamodb');
+
+const dynamo = DynamoDBDocument.from(new DynamoDB());
 
 exports.handler = async (event) => {
   const headers = {
@@ -8,7 +15,6 @@ exports.handler = async (event) => {
   };
 
   try {
-    // Log the incoming event to see the request payload
     console.log('Received event:', JSON.stringify(event, null, 2));
     
     const { productId } = event.pathParameters;
@@ -20,7 +26,7 @@ exports.handler = async (event) => {
       },
     };
 
-    const result = await dynamo.get(params).promise();
+    const result = await dynamo.get(params);
 
     if (!result.Item) {
       return {
@@ -39,7 +45,7 @@ exports.handler = async (event) => {
       },
     };
 
-    const stockResult = await dynamo.get(stockParams).promise();
+    const stockResult = await dynamo.get(stockParams);
     const stockCount = stockResult.Item ? stockResult.Item.count : 0;
 
     const product = result.Item;
