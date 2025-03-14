@@ -1,0 +1,16 @@
+{
+  "name": "importfileparser",
+  "version": "1.0.0",
+  "description": "",
+  "main": "importFileParser.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "types": "./importFileParser.d.ts",
+  "dependencies": {
+    "csv-parser": "^3.2.0"
+  }
+}
