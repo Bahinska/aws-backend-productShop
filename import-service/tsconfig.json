@@ -3,7 +3,7 @@
     "target": "ES2020",
     "module": "commonjs",
     "outDir": "./dist",
-    "rootDir": "./",
+    "rootDir": ".",
     "lib": [
       "es2020",
       "dom"
@@ -26,6 +26,13 @@
       "./node_modules/@types"
     ]
   },
+  "include": [
+    "lib/**/*",
+    "bin/**/*",
+    "handlers/**/*.ts",
+    "test/**/*",
+    "__tests__/**/*", "handlers/importFileParser/importFileParser.js", "handlers/importHandler/import.js",
+  ],
   "exclude": [
     "node_modules",
     "cdk.out"
