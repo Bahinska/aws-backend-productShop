@@ -47,6 +47,7 @@ export class ProjectCdkStack extends cdk.Stack {
       ),
       handler: 'getProductsList.handler',
       environment,
+      timeout: cdk.Duration.seconds(10),
     });
     productsListHandler.addToRolePolicy(dynamoDBPolicy);
 
