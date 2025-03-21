@@ -1,6 +1,5 @@
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
-import { type APIGatewayEvent, APIGatewayProxyHandler } from 'aws-lambda';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
+const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
 
 const s3Client = new S3Client({ region: 'eu-north-1' });
 
@@ -9,9 +8,9 @@ const headers = {
     'Access-Control-Allow-Credentials': true,
 };
 
-export const handler: APIGatewayProxyHandler = async (event: APIGatewayEvent) => {
+exports.handler = async (event) => {
     const bucketName = process.env.BUCKET_NAME;
-    const fileName = event.queryStringParameters?.name;
+    const fileName = event.queryStringParameters?.name
 
     if (!fileName) {
         return {

@@ -1,7 +1,7 @@
 import { S3Client, GetObjectCommand, CopyObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { mockClient } from 'aws-sdk-client-mock';
 import { Readable } from 'stream';
-import { handler } from '../importFileParser';
+import { handler } from '../handlers/importFileParser/importFileParser';
 
 const s3Mock = mockClient(S3Client);
 
@@ -13,7 +13,7 @@ describe('importFileParser', () => {
     it('should log parsed rows from CSV and move file to parsed folder', async () => {
         // Mock S3 GetObject response
         s3Mock.on(GetObjectCommand).resolves({
-            Body: Readable.from(['name,age\nJohn Doe,30\nJane Doe,25']) as any,
+            Body: Readable.from(['name,age\nJohn Doe,30\nJane Doe,25']),
         });
 
         // Mock S3 CopyObject response
@@ -38,9 +38,9 @@ describe('importFileParser', () => {
         };
 
         console.log = jest.fn();
-        const context = {} as any;
+        const context = {};
         const callback = () => {};
-        await handler(event as any, context, callback);
+        await handler(event, context, callback);
         expect(console.log).toHaveBeenCalledWith('Lambda triggered');
         expect(console.log).toHaveBeenCalledWith('Parsed row: {"name":"John Doe","age":"30"}');
         expect(console.log).toHaveBeenCalledWith('Parsed row: {"name":"Jane Doe","age":"25"}');
@@ -48,3 +48,5 @@ describe('importFileParser', () => {
         expect(console.log).toHaveBeenCalledWith('File deleted: uploaded/example.csv');
     });
 });
+
+
