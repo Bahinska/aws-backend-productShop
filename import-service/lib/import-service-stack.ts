@@ -14,6 +14,12 @@ export class ImportServiceStack extends cdk.Stack {
 
     const bucket = s3.Bucket.fromBucketName(this, 'ImportBucket', 'import-bucket-margo1');
 
+    const basicAuthorizer = new lambda.Function(this, 'BasicAuthorizerFunction', {
+      runtime: lambda.Runtime.NODEJS_LATEST,
+      code: lambda.Code.fromAsset(path.join('..', 'authorization-service', 'handlers')),
+      handler: 'basicAuthorizer.handler',
+    });
+
     const importProductsFile = new lambda.Function(this, 'ImportProductsFileFunction', {
       runtime: lambda.Runtime.NODEJS_LATEST,
       code: lambda.Code.fromAsset(path.join('handlers','importHandler')),
@@ -63,9 +69,17 @@ export class ImportServiceStack extends cdk.Stack {
       },
     });
 
+    const authorizer = new apigateway.TokenAuthorizer(this, 'BasicAuthorizer', {
+      handler: basicAuthorizer,
+    });
+
     const importIntegration = new apigateway.LambdaIntegration(importProductsFile);
 
-    api.root.addResource('import').addMethod('GET', importIntegration);
+    const imports = api.root.addResource('import');
+    imports.addMethod('GET', importIntegration, {
+      authorizationType: apigateway.AuthorizationType.CUSTOM,
+      authorizer,
+    });
 
     importProductsFile.addToRolePolicy(new iam.PolicyStatement({
       actions: ['s3:PutObject'],
